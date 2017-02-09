@@ -1,0 +1,21 @@
+{
+    "name": "coco-framework/db",
+    "description": "database",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "database", "orm", "mysql", "sql", "coco"
+    ],
+    "authors": [
+        {
+            "name": "Heropoo",
+            "email": "aiyouyou1000@163.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "coco\\db\\": ""
+        }
+    }
+}
