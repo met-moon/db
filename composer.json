@@ -1,6 +1,6 @@
 {
-    "name": "coco-framework/db",
-    "description": "database",
+    "name": "coco-soft/db",
+    "description": "database component",
     "type": "library",
     "license": "MIT",
     "keywords": [
