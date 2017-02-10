@@ -169,7 +169,7 @@ class Connection
      * @param array $bindParams
      * @return \PDOStatement | bool false
      */
-    public function query($sql, array $bindParams = [])
+    protected function query($sql, array $bindParams = [])
     {
         $sql = $this->quoteSql($sql);
         $this->lastSql = $sql;
@@ -323,7 +323,7 @@ class Connection
     }
 
     /**
-     * Returns a scalar like: COUNT、AVG、MAX、MIN
+     * Returns a scalar like: COUNT、AVG、MAX、MIN ...
      * @param string $sql
      * @param array $bindParams
      * @return bool false | mixed

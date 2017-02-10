@@ -86,10 +86,11 @@ class Table
      */
     public function __construct($tableName = null, Connection $db = null)
     {
-        $this->db = $db;
-
         if (!is_null($tableName)) {
             $this->tableName = $tableName;
+        }
+        if(!is_null($db)){
+            $this->db = $db;
         }
     }
 
@@ -101,7 +102,7 @@ class Table
     public function getPrimaryKey()
     {
         if (is_null($this->primaryKey)) {
-            $row = $this->getDb()->fetch("SHOW KEYS FROM $this->tableName WHERE `Key_name`='PRIMARY'");
+            $row = $this->getDb()->fetch("SHOW KEYS FROM {$this->getTableName()} WHERE `Key_name`='PRIMARY'");
             $this->primaryKey = $row['Column_name'];
         }
 
@@ -109,12 +110,24 @@ class Table
     }
 
     /**
-     * get Db instance
+     * get the db connection
+     * @param bool $throwException
      * @return Connection|null
+     * @throws Exception
      */
-    public function getDb()
+    public function getDb($throwException = true)
     {
+        if($throwException && !$this->db instanceof Connection){
+            throw new Exception('Attribute `db` is not defined');
+        }
         return $this->db;
+    }
+
+    public function getTableName($throwException = true){
+        if($throwException && empty($this->tableName)){
+            throw new Exception('Attribute `tableName` is not defined');
+        }
+        return $this->tableName;
     }
 
     /**
@@ -123,7 +136,7 @@ class Table
      */
     public function getLastSql()
     {
-        return $this->db->getLastSql();
+        return $this->getDb()->getLastSql();
     }
 
     /**
@@ -133,7 +146,7 @@ class Table
      */
     public function insert(array $insertData)
     {
-        return $this->db->insert($this->tableName, $insertData);
+        return $this->getDb()->insert($this->getTableName(), $insertData);
     }
 
     /**
@@ -145,7 +158,7 @@ class Table
      */
     public function update(array $setData, $where, array $bindParams = [])
     {
-        return $this->db->update($this->tableName, $setData, $where, $bindParams);
+        return $this->getDb()->update($this->getTableName(), $setData, $where, $bindParams);
     }
 
     /**
@@ -156,7 +169,7 @@ class Table
      */
     public function delete($where = '', $bindParams = [])
     {
-        return $this->db->delete($this->tableName, $where, $bindParams);
+        return $this->getDb()->delete($this->getTableName(), $where, $bindParams);
     }
 
     /**
@@ -219,11 +232,15 @@ class Table
     /**
      * limit
      * @param int|string $limit
+     * @param int|string $offset
      * @return $this
      */
-    public function limit($limit)
+    public function limit($limit, $offset=null)
     {
         $this->limit = $limit;
+        if(!is_null($offset)){
+            $this->offset = $offset;
+        }
         return $this;
     }
 
@@ -283,7 +300,7 @@ class Table
             $sql .= $this->fields;
         }
 
-        $sql .= ' FROM ' . $this->tableName;
+        $sql .= ' FROM ' . $this->getTableName();
 
         if (!empty($this->alias)) {
             $sql .= ' AS ' . $this->alias;
@@ -352,7 +369,7 @@ class Table
     public function fetchAll($fetchStyle = PDO::FETCH_ASSOC)
     {
         $sql = $this->combineSql();
-        $res = $this->db->fetchAll($sql, $this->bindParams, $fetchStyle);
+        $res = $this->getDb()->fetchAll($sql, $this->bindParams, $fetchStyle);
         $this->resetAttr();
         return $res;
     }
@@ -365,7 +382,7 @@ class Table
     public function fetch($fetchStyle = PDO::FETCH_ASSOC)
     {
         $sql = $this->combineSql();
-        $res = $this->db->fetch($sql, $this->bindParams, $fetchStyle);
+        $res = $this->getDb()->fetch($sql, $this->bindParams, $fetchStyle);
         $this->resetAttr();
         return $res;
     }
