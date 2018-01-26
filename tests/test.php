@@ -37,6 +37,6 @@ var_dump($db);
 //dump($list);
 //echo $db->scalar("select aaa from tt_user where id > :id and username=:name limit 1", ['id'=>1, 'name'=>'1212']);
 
-$user = new \Moon\Db\Table('tt_user', $db);
+$user = new \Moon\Db\Table('user', $db);
 
 var_dump($user->where('id=?', [103])->fetch());
