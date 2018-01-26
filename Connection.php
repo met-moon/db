@@ -1,12 +1,12 @@
 <?php
-namespace coco\db;
+namespace Moon\Db;
 
 use PDO;
 use PDOException;
 
 /**
  * Class Connection
- * @package coco\db
+ * @package Moon\Db
  */
 class Connection
 {

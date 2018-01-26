@@ -1,11 +1,11 @@
 <?php
-namespace coco\db;
+namespace Moon\Db;
 
 use PDO;
 
 /**
  * Class Table
- * @package coco\db
+ * @package Moon\Db
  */
 class Table
 {

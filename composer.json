@@ -1,10 +1,10 @@
 {
-    "name": "coco-soft/db",
+    "name": "heropoo/db",
     "description": "database component",
     "type": "library",
     "license": "MIT",
     "keywords": [
-        "database", "orm", "mysql", "sql", "coco"
+        "database", "orm", "mysql", "sql"
     ],
     "authors": [
         {
@@ -12,11 +12,9 @@
             "email": "aiyouyou1000@163.com"
         }
     ],
-    "require": {},
-	"minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "coco\\db\\": ""
+            "Moon\\Db\\": ""
         }
     }
 }
