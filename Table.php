@@ -89,7 +89,7 @@ class Table
         if (!is_null($tableName)) {
             $this->tableName = $tableName;
         }
-        if(!is_null($db)){
+        if (!is_null($db)) {
             $this->db = $db;
         }
     }
@@ -117,14 +117,15 @@ class Table
      */
     public function getDb($throwException = true)
     {
-        if($throwException && !$this->db instanceof Connection){
+        if ($throwException && !$this->db instanceof Connection) {
             throw new Exception('Attribute `db` is not defined');
         }
         return $this->db;
     }
 
-    public function getTableName($throwException = true){
-        if($throwException && empty($this->tableName)){
+    public function getTableName($throwException = true)
+    {
+        if ($throwException && empty($this->tableName)) {
             throw new Exception('Attribute `tableName` is not defined');
         }
         return $this->tableName;
@@ -235,10 +236,10 @@ class Table
      * @param int|string $offset
      * @return $this
      */
-    public function limit($limit, $offset=null)
+    public function limit($limit, $offset = null)
     {
         $this->limit = $limit;
-        if(!is_null($offset)){
+        if (!is_null($offset)) {
             $this->offset = $offset;
         }
         return $this;

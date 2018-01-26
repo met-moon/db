@@ -1,4 +1,5 @@
 <?php
+
 namespace Moon\Db;
 
 use PDO;
@@ -66,17 +67,17 @@ class Connection
 
     public function __construct(array $config = [])
     {
-        if(!empty($config['slaves'])){
+        if (!empty($config['slaves'])) {
             $this->slaves = $config['slaves'];
             unset($config['slaves']);
         }
 
-        if(!empty($config)){
+        if (!empty($config)) {
             $this->config = array_replace_recursive($this->config, $config);
-            foreach($this->config as $key => $value){
-                if(isset($this->$key)){
+            foreach ($this->config as $key => $value) {
+                if (isset($this->$key)) {
                     $this->$key = $value;
-                }else{
+                } else {
                     throw new Exception("Unknown configuration item `$key` was given.");
                 }
             }
@@ -93,11 +94,11 @@ class Connection
             return $this->pdo;
         }
         $config = [
-            'dsn'=>$this->dsn,
-            'username'=>$this->username,
-            'password'=>$this->password,
-            'options'=>$this->options,
-            'emulatePrepares'=>$this->emulatePrepares,
+            'dsn' => $this->dsn,
+            'username' => $this->username,
+            'password' => $this->password,
+            'options' => $this->options,
+            'emulatePrepares' => $this->emulatePrepares,
         ];
         $this->pdo = $this->makePdo($config);
         return $this->pdo;
@@ -218,6 +219,7 @@ class Connection
             $this->getPdo()->beginTransaction();
         }
     }
+
     /**
      * commit transaction
      */

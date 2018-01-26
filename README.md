@@ -12,10 +12,10 @@ A database connection based on pdo
     'username'=>'root',
     'password'=>'root'
 ];
-$db = new \coco\db\Connection($config);*/
+$db = new Moon\Db\Connection($config);*/
 
 // or method 2 using set object attributes
-$db = new \coco\db\Connection();
+$db = new \Moon\Db\Connection();
 $db->dsn = 'mysql:host=localhost;dbname=blog';
 $db->username = 'root';
 $db->password = 'root';
