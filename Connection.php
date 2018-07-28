@@ -283,7 +283,7 @@ class Connection
      * @param string $sql
      * @param array $bindParams
      * @param int $fetchStyle
-     * @return array|bool|mixed
+     * @return array
      */
     public function fetchAll($sql, array $bindParams = [], $fetchStyle = PDO::FETCH_ASSOC)
     {
@@ -298,7 +298,7 @@ class Connection
             call_user_func_array([$statement, 'setFetchMode'], $args);
             return $statement->fetchAll();
         }
-        return false;
+        return [];
     }
 
     /**

@@ -408,4 +408,11 @@ class Table
         }
         return false;
     }
+	
+	/**
+     * @return static
+     */
+    public static function find(){
+        return new static();
+    }
 }
