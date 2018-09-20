@@ -79,6 +79,8 @@ class Table
      */
     protected $offset;
 
+    protected $attributes = [];
+
     /**
      * Table constructor.
      * @param string $tableName
@@ -171,6 +173,15 @@ class Table
     public function delete($where = '', $bindParams = [])
     {
         return $this->getDb()->delete($this->getTableName(), $where, $bindParams);
+    }
+
+    public function save(){
+        $primaryKey = $this->getPrimaryKey();
+        $primaryKeyVal = $this->$primaryKey;
+        if(is_null($primaryKeyVal)){
+            return $this->insert($this->attributes);
+        }
+        return $this->update($this->attributes, $primaryKey.'=:primaryKey', [':primaryKey'=>$primaryKeyVal]);
     }
 
     /**
@@ -408,11 +419,45 @@ class Table
         }
         return false;
     }
+
+    public function first(){
+        $res = $this->fetch();
+        if($res === false){
+            return false;
+        }
+        $this->attributes = $res;
+        return $this;
+    }
+
+    public function all(){
+        $list = $this->fetchAll();
+        $newList = [];
+        foreach($list as $val){
+            $model = new static();
+            $model->attributes = $val;
+            $newList[] = $model;
+        }
+        return $newList;
+    }
+
+    public function toArray(){
+        return $this->attributes;
+    }
 	
 	/**
      * @return static
      */
     public static function find(){
         return new static();
+    }
+
+    public function __set($name, $value)
+    {
+        $this->attributes[$name] = $value;
+    }
+
+    public function __get($name)
+    {
+        return isset($this->attributes[$name]) ? $this->attributes[$name] : null;
     }
 }
