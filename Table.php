@@ -420,6 +420,21 @@ class Table
         return false;
     }
 
+    /**
+     * rows count
+     * @param string $column
+     * @return bool|int
+     */
+    public function count($column = '*'){
+        $res = $this->select("count($column)")->fetch(PDO::FETCH_NUM);
+        if ($res !== false) {
+            if (isset($res[0])) {
+                return $res[0];
+            }
+        }
+        return false;
+    }
+
     public function first(){
         $res = $this->fetch();
         if($res === false){
