@@ -357,7 +357,7 @@ class Connection
         $bindFields = [];
         $values = [];
         foreach ($insertData as $key => $value) {
-            $fields[] = $key;
+            $fields[] = '`'.$key.'`';
             $bindFields[] = '?';
             $values[] = $value;
         }
