@@ -7,7 +7,7 @@ use PDO;
  * Class Table
  * @package Moon\Db
  */
-class Table
+class Table implements \JsonSerializable,\ArrayAccess
 {
     /**
      * @var Connection|null
@@ -120,7 +120,7 @@ class Table
     public function getDb($throwException = true)
     {
         if ($throwException && !$this->db instanceof Connection) {
-            throw new Exception('Attribute `db` is not defined');
+            throw new Exception('Property `db` is not defined');
         }
         return $this->db;
     }
@@ -128,7 +128,7 @@ class Table
     public function getTableName($throwException = true)
     {
         if ($throwException && empty($this->tableName)) {
-            throw new Exception('Attribute `tableName` is not defined');
+            throw new Exception('Property `tableName` is not defined');
         }
         return $this->tableName;
     }
@@ -177,11 +177,11 @@ class Table
 
     public function save(){
         $primaryKey = $this->getPrimaryKey();
-        $primaryKeyVal = $this->$primaryKey;
+        $primaryKeyVal = isset($this[$primaryKey]) ? $this[$primaryKey] : null;
         if(is_null($primaryKeyVal)){
             return $this->insert($this->attributes);
         }
-        return $this->update($this->attributes, $primaryKey.'=:primaryKey', [':primaryKey'=>$primaryKeyVal]);
+        return $this->update($this->attributes, "`$primaryKey`=:primaryKey", [':primaryKey'=>$primaryKeyVal]);
     }
 
     /**
@@ -393,7 +393,7 @@ class Table
      */
     public function fetch($fetchStyle = PDO::FETCH_ASSOC)
     {
-        $sql = $this->combineSql();
+        echo $sql = $this->combineSql();
         $res = $this->getDb()->fetch($sql, $this->bindParams, $fetchStyle);
         $this->resetAttr();
         return $res;
@@ -474,5 +474,27 @@ class Table
     public function __get($name)
     {
         return isset($this->attributes[$name]) ? $this->attributes[$name] : null;
+    }
+
+    public function jsonSerialize(){
+        return $this->attributes;
+    }
+
+    public function offsetExists($offset){
+        return isset($this->attributes[$offset]);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->attributes[$offset] = $value;
+    }
+
+    public function offsetGet($offset){
+        return $this->attributes[$offset];
+    }
+
+    public function offsetUnset($offset)
+    {
+        unset($this->attributes[$offset]);
     }
 }
