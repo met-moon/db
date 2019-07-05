@@ -393,7 +393,7 @@ class Table implements \JsonSerializable,\ArrayAccess
      */
     public function fetch($fetchStyle = PDO::FETCH_ASSOC)
     {
-        echo $sql = $this->combineSql();
+        $sql = $this->combineSql();
         $res = $this->getDb()->fetch($sql, $this->bindParams, $fetchStyle);
         $this->resetAttr();
         return $res;
