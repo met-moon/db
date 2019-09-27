@@ -57,6 +57,13 @@ class Table implements \JsonSerializable, \ArrayAccess
         return $this->tableName;
     }
 
+    /**
+     * @return string
+     */
+    public function getDb(){
+        return $this->db;
+    }
+
     public function toArray()
     {
         return $this->attributes;

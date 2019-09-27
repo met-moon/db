@@ -9,6 +9,7 @@
 namespace Moon\Db;
 
 use Moon\Controller;
+use Moon\Db\tests\User;
 use PDO;
 
 class QueryBuilder
@@ -85,6 +86,7 @@ class QueryBuilder
     public function table(Table $table)
     {
         $this->table = $table;
+        $this->db(\Moon::$app->get($table->getDb())); // todo容器
         return $this;
     }
 
