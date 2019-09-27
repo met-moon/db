@@ -20,7 +20,7 @@ class Connection
 
     public $dsn = 'mysql:host=localhost;dbname=test;port=3306;charset=utf8';
     public $username = 'root';
-    public $password;
+    public $password = '';
     public $charset = 'utf8';
     public $tablePrefix = '';
     public $emulatePrepares = false;
@@ -35,7 +35,7 @@ class Connection
     protected $config = [
         'dsn' => 'mysql:host=localhost;dbname=test;port=3306;charset=utf8',
         'username' => 'root',
-        'password' => null,
+        'password' => '',
         'charset' => 'utf8',
         'tablePrefix' => '',
         'emulatePrepares' => false,

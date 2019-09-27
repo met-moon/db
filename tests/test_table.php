@@ -1,22 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ttt
- * Date: 2018/3/23
- * Time: 11:12
- */
-require_once '../Connection.php';
-require_once '../Table.php';
-require_once '../Exception.php';
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
 
-$db = new \Moon\Db\Connection([
+require_once __DIR__.'/../Connection.php';
+require_once __DIR__.'/../Table.php';
+require_once __DIR__.'/../QueryBuilder.php';
+require_once __DIR__.'/../Exception.php';
+require_once __DIR__.'/User.php';
+
+$db = new Moon\Db\Connection([
     'dsn'=>'mysql:host=localhost;dbname=test',
     'username'=>'root',
-    'password'=>'root',
-    'tablePrefix'=>'z_'
+    'password'=>'root123456',
 ]);
 
+$user = new Moon\Db\tests\User();
+$user->username = 'test12312';
+$user->created_at = date('Y-m-d H:i:s');
+$user->updated_at = date('Y-m-d H:i:s');
+$res = $user->save();
+var_dump($res, $user);
 
-$row = $db->fetchAll('select * from {{area}} where area_id > ? limit 2', [3]);
-var_dump($row);
-echo $db->getLastSql();

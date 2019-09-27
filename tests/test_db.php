@@ -25,13 +25,11 @@ var_dump($db->getPdo());
 $list = $db->fetchAll("select id,title from article where id > :id and status=:status limit 5", [':id'=>100, ':status'=>'publish']);
 var_dump($list);
 
-$row = $db->fetch("select * from article where id > :id and status=:status limit 1", ['id'=>100, 'status'=>'publish']);
+echo $db->getLastSql().PHP_EOL;
+
+$row = $db->fetch("select id,title from article where id > ? and status=? limit 1", [100, 'publish']);
 var_dump($row);
 
 $res = $db->scalar("select title from article where id > :id and status=:status limit 1", ['id'=>100, 'status'=>'publish']);
 var_dump($res);
 
-
-//$user = new \Moon\Db\Table('user', $db);
-//
-//var_dump($user->where('id=?', [103])->fetch());

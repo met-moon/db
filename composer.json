@@ -13,7 +13,9 @@
         }
     ],
     "require": {
-        "php": ">= 5.4"
+        "php": ">= 5.4",
+        "ext-json": "*",
+        "ext-pdo": "*"
     },
     "autoload": {
         "psr-4": {
