@@ -303,7 +303,7 @@ class QueryBuilder
             $sql .= $this->fields;
         }
 
-        $sql .= ' FROM ' . $this->table->getTableName();
+        $sql .= ' FROM ' . $this->table->tableName();
 
         if (!empty($this->alias)) {
             $sql .= ' AS ' . $this->alias;

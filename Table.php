@@ -9,11 +9,6 @@ namespace Moon\Db;
 abstract class Table implements \JsonSerializable, \ArrayAccess
 {
     /**
-     * @var string
-     */
-    protected $tableName;
-
-    /**
      * @var string|array|null the table's primary key
      */
     protected $primaryKey;
@@ -25,6 +20,12 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
 
     public function setAttributes($attributes)
     {
+        $this->attributes = array_merge($this->attributes, $attributes);
+        return $this;
+    }
+
+    public function setAllAttributes($attributes)
+    {
         $this->attributes = $attributes;
         return $this;
     }
@@ -32,26 +33,6 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
     public function setAttribute($attribute, $value)
     {
         $this->attributes[$attribute] = $value;
-    }
-
-    /**
-     * @return string|array|null
-     */
-    public function getPrimaryKey()
-    {
-//        if (is_null($this->primaryKey)) {
-//            $this->primaryKey = $this->getQuery()->getPrimaryKey();
-//        }
-        //todo query table's primary key
-        return $this->primaryKey;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTableName()
-    {
-        return $this->tableName;
     }
 
     public function toArray()
@@ -100,7 +81,7 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
 
         $primaryKey = $this->getPrimaryKey();
         if (is_null($primaryKey)) {  // not has primary key
-            return $query->insert($this->tableName, $this->attributes);
+            return $query->insert(static::tableName(), $this->attributes);
         } else if (is_array($primaryKey)) { // primary key is a array
             $where = [];
             $bindVal = [];
@@ -114,44 +95,61 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
                 }
             }
             if (count($where) == count($primaryKey)) {
-                return $query->update($this->tableName, $this->attributes, implode(' and ', $where), $bindVal);
+                return $query->update(static::tableName(), $this->attributes, implode(' and ', $where), $bindVal);
             } else {
-                return $query->insert($this->tableName, $this->attributes);
+                return $query->insert(static::tableName(), $this->attributes);
             }
         } else { // primary key is a autoincrement int type //todo test
             $primaryKeyVal = isset($this[$primaryKey]) ? $this[$primaryKey] : null;
             if (is_null($primaryKeyVal)) {
-                $res = $query->insert($this->tableName, $this->attributes);
+                $res = $query->insert(static::tableName(), $this->attributes);
                 if ($res) {
                     $this->attributes[$primaryKey] = $query->getDb()->getLastInsertId();
                 }
                 return $res;
             }
-            return $this->getQuery()->update($this->tableName, $this->attributes, "`$primaryKey`=:primaryKey", [':primaryKey' => $primaryKeyVal]);
+            return $this->getQuery()->update(static::tableName(), $this->attributes, "`$primaryKey`=:primaryKey", [':primaryKey' => $primaryKeyVal]);
         }
     }
 
     //todo
 //    public function update(array $setData, $where, array $bindParams = [])
 //    {
-//        return $this->getQuery()->update($this->tableName, $setData, $where, $bindParams);
+//        return $this->getQuery()->update(static::tableName(), $setData, $where, $bindParams);
 //    }
 //
 //    public function delete($where = '', $bindParams = [])
 //    {
-//        return $this->getQuery()->delete($this->tableName, $where, $bindParams);
+//        return $this->getQuery()->delete(static::tableName(), $where, $bindParams);
 //    }
+
+    /**
+     * @return string|array|null
+     */
+    public function getPrimaryKey()
+    {
+//        if (is_null($this->primaryKey)) {
+//            $this->primaryKey = $this->getQuery()->getPrimaryKey();
+//        }
+        //todo query table's primary key
+        return $this->primaryKey;
+    }
+
+    /**
+     * @return string
+     */
+    abstract static public function tableName();
 
     /**
      * @return Connection
      */
-    abstract public function getDb();
+    abstract static public function getDb();
 
     public function getQuery()
     {
         $query = new QueryBuilder();
         $query->table($this);
-        $query->db($this->getDb());
+        $query->db(static::getDb());
         return $query;
     }
 
