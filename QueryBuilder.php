@@ -86,7 +86,7 @@ class QueryBuilder
     public function table(Table $table)
     {
         $this->table = $table;
-        $this->db(\Moon::$app->get($table->getDb())); // todo容器
+        $this->db($table->getDb());
         return $this;
     }
 
@@ -443,7 +443,8 @@ class QueryBuilder
         $list = $this->fetchAll();
         $newList = [];
         foreach ($list as $val) {
-            $model = new get_class($this->getTable());
+            $className = get_class($this->getTable());
+            $model = new $className;
             $model->setAttributes($val);
             $newList[] = $model;
         }

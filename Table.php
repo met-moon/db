@@ -6,15 +6,12 @@ namespace Moon\Db;
  * Class Table
  * @package Moon\Db
  */
-class Table implements \JsonSerializable, \ArrayAccess
+abstract class Table implements \JsonSerializable, \ArrayAccess
 {
     /**
      * @var string
      */
     protected $tableName;
-
-    /** @var string */
-    protected $db;
 
     /**
      * @var string|array|null the table's primary key
@@ -55,13 +52,6 @@ class Table implements \JsonSerializable, \ArrayAccess
     public function getTableName()
     {
         return $this->tableName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDb(){
-        return $this->db;
     }
 
     public function toArray()
@@ -141,20 +131,27 @@ class Table implements \JsonSerializable, \ArrayAccess
         }
     }
 
-    public function update(array $setData, $where, array $bindParams = [])
-    {
-        return $this->getQuery()->update($this->tableName, $setData, $where, $bindParams);
-    }
+    //todo
+//    public function update(array $setData, $where, array $bindParams = [])
+//    {
+//        return $this->getQuery()->update($this->tableName, $setData, $where, $bindParams);
+//    }
+//
+//    public function delete($where = '', $bindParams = [])
+//    {
+//        return $this->getQuery()->delete($this->tableName, $where, $bindParams);
+//    }
 
-    public function delete($where = '', $bindParams = [])
-    {
-        return $this->getQuery()->delete($this->tableName, $where, $bindParams);
-    }
+    /**
+     * @return Connection
+     */
+    abstract public function getDb();
 
     public function getQuery()
     {
         $query = new QueryBuilder();
         $query->table($this);
+        $query->db($this->getDb());
         return $query;
     }
 
