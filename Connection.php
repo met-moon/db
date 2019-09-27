@@ -20,7 +20,7 @@ class Connection
 
     public $dsn = 'mysql:host=localhost;dbname=test;port=3306;charset=utf8';
     public $username = 'root';
-    public $password = '';
+    public $password;
     public $charset = 'utf8';
     public $tablePrefix = '';
     public $emulatePrepares = false;
@@ -35,7 +35,7 @@ class Connection
     protected $config = [
         'dsn' => 'mysql:host=localhost;dbname=test;port=3306;charset=utf8',
         'username' => 'root',
-        'password' => '',
+        'password' => null,
         'charset' => 'utf8',
         'tablePrefix' => '',
         'emulatePrepares' => false,
@@ -345,7 +345,7 @@ class Connection
      * insert
      * @param $tableName
      * @param array $insertData
-     * @return bool false|int lastInsertId
+     * @return bool false|int affected rows
      */
     public function insert($tableName, array $insertData = [])
     {
@@ -357,17 +357,13 @@ class Connection
         $bindFields = [];
         $values = [];
         foreach ($insertData as $key => $value) {
-            $fields[] = '`'.$key.'`';
+            $fields[] = '`' . $key . '`';
             $bindFields[] = '?';
             $values[] = $value;
         }
         $sql = 'INSERT INTO ' . $tableName . '(' . implode($fields, ',') . ') VALUES(' . implode($bindFields, ',') . ')';
 
-        $affectedRows = $this->execute($sql, $values);
-        if ($affectedRows) {
-            return $this->getLastInsertId();
-        }
-        return false;
+        return $this->execute($sql, $values);
     }
 
     /**
@@ -422,16 +418,6 @@ class Connection
         $sql .= ' WHERE ' . $where;
 
         return $this->execute($sql, $bindParams);
-    }
-
-    /**
-     * from table
-     * @param string $tableName
-     * @return Table
-     */
-    public function from($tableName)
-    {
-        return new Table($tableName, $this);
     }
 
     /**
