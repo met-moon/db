@@ -13,13 +13,20 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
      */
     protected $primaryKey;
 
-    /**
-     * @var array
-     */
+    protected $primaryKeyAutoIncrement = true;
+
+    public $isCreated = false;
+    public $isDeleted = false;
+
     protected $attributes = [];
+
+    protected $updateAttributes = [];
 
     public function setAttributes($attributes)
     {
+        if ($this->isCreated) {
+            $this->updateAttributes = array_merge($this->updateAttributes, $attributes);
+        }
         $this->attributes = array_merge($this->attributes, $attributes);
         return $this;
     }
@@ -32,6 +39,9 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
 
     public function setAttribute($attribute, $value)
     {
+        if ($this->isCreated) {
+            $this->updateAttributes[$attribute] = $value;
+        }
         $this->attributes[$attribute] = $value;
     }
 
@@ -42,6 +52,9 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
 
     public function __set($name, $value)
     {
+        if ($this->isCreated) {
+            $this->updateAttributes[$name] = $value;
+        }
         $this->attributes[$name] = $value;
     }
 
@@ -75,53 +88,90 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
         unset($this->attributes[$offset]);
     }
 
-    public function save()
+    protected function getUniqueWhereParams($action)
     {
-        $query = $this->getQuery();
-
         $primaryKey = $this->getPrimaryKey();
         if (is_null($primaryKey)) {  // not has primary key
-            return $query->insert(static::tableName(), $this->attributes);
+            throw new Exception('Unable to ' . $action . ' table "' . static::tableName() . '",because the table does not have a primary key.');   //todo get full table name
         } else if (is_array($primaryKey)) { // primary key is a array
             $where = [];
             $bindVal = [];
+            $emptyFields = [];
             foreach ($primaryKey as $pk) {
                 $pkVal = isset($this[$pk]) ? $this[$pk] : null;
                 if (!is_null($pkVal)) {
                     $where[] = "`$pk`=:{$pk}";
                     $bindVal[] = $pkVal;
                 } else {
-                    break;
+                    //break;
+                    $emptyFields[] = $pk;
                 }
             }
-            if (count($where) == count($primaryKey)) {
-                return $query->update(static::tableName(), $this->attributes, implode(' and ', $where), $bindVal);
-            } else {
-                return $query->insert(static::tableName(), $this->attributes);
+            if (!empty($emptyFields)) {
+                throw new Exception('Primary key "' . implode('","', $emptyFields) . '" can not be null.');
             }
-        } else { // primary key is a autoincrement int type //todo test
+            return [
+                'where' => implode(' and ', $where),
+                'params' => $bindVal
+            ];
+        } else {
             $primaryKeyVal = isset($this[$primaryKey]) ? $this[$primaryKey] : null;
             if (is_null($primaryKeyVal)) {
-                $res = $query->insert(static::tableName(), $this->attributes);
-                if ($res) {
-                    $this->attributes[$primaryKey] = $query->getDb()->getLastInsertId();
-                }
-                return $res;
+                throw new Exception('Primary key "' . $primaryKey . '" can not be null.');
             }
-            return $this->getQuery()->update(static::tableName(), $this->attributes, "`$primaryKey`=:primaryKey", [':primaryKey' => $primaryKeyVal]);
+            return [
+                'where' => "`$primaryKey`=:primaryKey",
+                'params' => [':primaryKey' => $primaryKeyVal]
+            ];
         }
     }
 
-    //todo
-//    public function update(array $setData, $where, array $bindParams = [])
-//    {
-//        return $this->getQuery()->update(static::tableName(), $setData, $where, $bindParams);
-//    }
-//
-//    public function delete($where = '', $bindParams = [])
-//    {
-//        return $this->getQuery()->delete(static::tableName(), $where, $bindParams);
-//    }
+    /**
+     * save
+     * @return bool false|int affected rows
+     * @throws Exception
+     */
+    public function save()
+    {
+        //var_dump('isCreated.'.var_export($this->isCreated, 1));
+        $query = $this->getQuery();
+
+        if ($this->isCreated) {
+            $whereParams = $this->getUniqueWhereParams('update');
+            $res = $query->update(static::tableName(), $this->updateAttributes, $whereParams['where'], $whereParams['params']);
+            if ($res) {
+                $this->updateAttributes = [];
+            }
+            return $res;
+        }
+        $res = $query->insert(static::tableName(), $this->attributes);
+        if ($res) {
+            if ($this->primaryKeyAutoIncrement) {
+                $autoIncrementId = $query->getDb()->getLastInsertId();
+                $this->setAttribute($this->primaryKey, $autoIncrementId);
+            }
+            $this->isCreated = true;
+        }
+        return $res;
+    }
+
+    /**
+     * delete
+     * @return bool false|int affected rows
+     * @throws Exception
+     */
+    public function delete()
+    {
+        $query = $this->getQuery();
+        $whereParams = $this->getUniqueWhereParams('delete');
+        $res = $query->delete(static::tableName(), $whereParams['where'], $whereParams['params']);
+        if ($res) {
+            $this->isDeleted = true;
+            $this->isCreated = false;
+            $this->attributes = $this->updateAttributes = [];
+        }
+        return $res;
+    }
 
     /**
      * @return string|array|null

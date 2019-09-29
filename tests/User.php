@@ -12,15 +12,19 @@ use Moon\Db\Table;
 
 class User extends Table
 {
-    protected $tableName = 'user';
     protected $primaryKey = 'id';
 
-    public function getDb(){
+    public static function getDb(){
         $db = new Connection([
             'dsn'=>'mysql:host=localhost;dbname=test',
             'username'=>'root',
             'password'=>'root123456',
         ]);
         return $db;
+    }
+
+    public static function tableName()
+    {
+        return 'user';
     }
 }

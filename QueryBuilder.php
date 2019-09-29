@@ -435,6 +435,7 @@ class QueryBuilder
         }
         $table = $this->getTable();
         $table->setAttributes($res);
+        $table->isCreated = true;
         return $table;
     }
 
@@ -446,6 +447,7 @@ class QueryBuilder
             $className = get_class($this->getTable());
             $model = new $className;
             $model->setAttributes($val);
+            $model->isCreated = true;
             $newList[] = $model;
         }
         return $newList;
