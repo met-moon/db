@@ -361,7 +361,7 @@ class Connection
             $bindFields[] = '?';
             $values[] = $value;
         }
-        $sql = 'INSERT INTO ' . $tableName . '(' . implode($fields, ',') . ') VALUES(' . implode($bindFields, ',') . ')';
+        $sql = 'INSERT INTO ' . $tableName . '(' . implode(',', $fields) . ') VALUES(' . implode(',', $bindFields) . ')';
 
         return $this->execute($sql, $values);
     }
@@ -414,7 +414,7 @@ class Connection
             $bindParams = $bindSetParams;
         }
 
-        $sql = 'UPDATE ' . $tableName . ' SET ' . implode($fields, ',');
+        $sql = 'UPDATE ' . $tableName . ' SET ' . implode(',', $fields);
         $sql .= ' WHERE ' . $where;
 
         return $this->execute($sql, $bindParams);
