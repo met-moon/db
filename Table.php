@@ -22,6 +22,16 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
 
     protected $updateAttributes = [];
 
+    /**
+     * @return string
+     */
+    abstract static public function tableName();
+
+    /**
+     * @return Connection
+     */
+    abstract static public function getDb();
+
     public function setAttributes($attributes)
     {
         if ($this->isCreated) {
@@ -111,7 +121,7 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
                 throw new Exception('Primary key "' . implode('","', $emptyFields) . '" can not be null.');
             }
             return [
-                'where' => implode(' and ', $where),
+                'where' => implode(' AND ', $where),
                 'params' => $bindVal
             ];
         } else {
@@ -184,16 +194,6 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
         //todo query table's primary key
         return $this->primaryKey;
     }
-
-    /**
-     * @return string
-     */
-    abstract static public function tableName();
-
-    /**
-     * @return Connection
-     */
-    abstract static public function getDb();
 
     public function getQuery()
     {

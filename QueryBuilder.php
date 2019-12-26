@@ -8,8 +8,6 @@
 
 namespace Moon\Db;
 
-use Moon\Controller;
-use Moon\Db\tests\User;
 use PDO;
 
 class QueryBuilder
@@ -224,6 +222,8 @@ class QueryBuilder
      * @param string $where
      * @param array $bindParams
      * @return $this
+     *
+     * //todo update
      */
     public function where($where, array $bindParams = [])
     {
@@ -367,7 +367,7 @@ class QueryBuilder
     /**
      * fetch all rows
      * @param int $fetchStyle
-     * @return array|bool|mixed
+     * @return array
      */
     public function fetchAll($fetchStyle = PDO::FETCH_ASSOC)
     {
@@ -442,14 +442,15 @@ class QueryBuilder
     public function all()
     {
         $list = $this->fetchAll();
-        $newList = [];
-        foreach ($list as $val) {
+        foreach ($list as $key => $val) {
             $className = get_class($this->getTable());
+
+            /** @var Table $model */
             $model = new $className;
             $model->setAttributes($val);
             $model->isCreated = true;
-            $newList[] = $model;
+            $list[$key] = $model;
         }
-        return $newList;
+        return $list;
     }
 }
