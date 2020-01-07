@@ -18,13 +18,13 @@ class Connection
     protected $lastSql;
     protected $lastParams;
 
-    public $dsn = 'mysql:host=localhost;dbname=test;port=3306;charset=utf8';
-    public $username = 'root';
-    public $password = '';
-    public $charset = 'utf8';
-    public $tablePrefix = '';
-    public $emulatePrepares = false;
-    public $options = [
+    protected $dsn = 'mysql:host=localhost;dbname=test;port=3306;charset=utf8';
+    protected $username = 'root';
+    protected $password = '';
+    protected $charset = 'utf8';
+    protected $tablePrefix = '';
+    protected $emulatePrepares = false;
+    protected $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ];
 
@@ -63,17 +63,18 @@ class Connection
      * ]
      * @var array
      */
-    public $slaves = [];
+    protected $slaves = [];
 
-    public function __construct(array $config = [])
+    public function __construct(array $master, array $slaves = [])
     {
-        if (!empty($config['slaves'])) {
-            $this->slaves = $config['slaves'];
-            unset($config['slaves']);
-        }
+//        if (!empty($config['slaves'])) {
+//            $this->slaves = $config['slaves'];
+//            unset($config['slaves']);
+//        }
+        $this->slaves = $slaves;
 
-        if (!empty($config)) {
-            $this->config = array_replace_recursive($this->config, $config);
+        if (!empty($master)) {
+            $this->config = array_replace_recursive($this->config, $master);
             foreach ($this->config as $key => $value) {
                 if (isset($this->$key)) {
                     $this->$key = $value;
