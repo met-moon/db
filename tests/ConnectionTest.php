@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class ConnectionTest extends TestCase
 {
-    const DB_PWD = 'root123456';
+    const DB_PWD = 'your password';
 
     public function testConnect()
     {
