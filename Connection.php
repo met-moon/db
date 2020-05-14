@@ -1,12 +1,13 @@
 <?php
-namespace coco\db;
+
+namespace Moon\Db;
 
 use PDO;
 use PDOException;
 
 /**
  * Class Connection
- * @package coco\db
+ * @package Moon\Db
  */
 class Connection
 {
@@ -17,13 +18,13 @@ class Connection
     protected $lastSql;
     protected $lastParams;
 
-    public $dsn = 'mysql:host=localhost;dbname=test;port=3306;charset=utf8';
-    public $username = 'root';
-    public $password = '';
-    public $charset = 'utf8';
-    public $tablePrefix = '';
-    public $emulatePrepares = false;
-    public $options = [
+    protected $dsn = 'mysql:host=localhost;dbname=test;port=3306;charset=utf8';
+    protected $username = 'root';
+    protected $password = '';
+    protected $charset = 'utf8';
+    protected $tablePrefix = '';
+    protected $emulatePrepares = false;
+    protected $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ];
 
@@ -62,21 +63,22 @@ class Connection
      * ]
      * @var array
      */
-    public $slaves = [];
+    protected $slaves = [];
 
-    public function __construct(array $config = [])
+    public function __construct(array $master, array $slaves = [])
     {
-        if(!empty($config['slaves'])){
-            $this->slaves = $config['slaves'];
-            unset($config['slaves']);
-        }
+//        if (!empty($config['slaves'])) {
+//            $this->slaves = $config['slaves'];
+//            unset($config['slaves']);
+//        }
+        $this->slaves = $slaves;
 
-        if(!empty($config)){
-            $this->config = array_replace_recursive($this->config, $config);
-            foreach($this->config as $key => $value){
-                if(isset($this->$key)){
+        if (!empty($master)) {
+            $this->config = array_replace_recursive($this->config, $master);
+            foreach ($this->config as $key => $value) {
+                if (isset($this->$key)) {
                     $this->$key = $value;
-                }else{
+                } else {
                     throw new Exception("Unknown configuration item `$key` was given.");
                 }
             }
@@ -93,11 +95,11 @@ class Connection
             return $this->pdo;
         }
         $config = [
-            'dsn'=>$this->dsn,
-            'username'=>$this->username,
-            'password'=>$this->password,
-            'options'=>$this->options,
-            'emulatePrepares'=>$this->emulatePrepares,
+            'dsn' => $this->dsn,
+            'username' => $this->username,
+            'password' => $this->password,
+            'options' => $this->options,
+            'emulatePrepares' => $this->emulatePrepares,
         ];
         $this->pdo = $this->makePdo($config);
         return $this->pdo;
@@ -218,6 +220,7 @@ class Connection
             $this->getPdo()->beginTransaction();
         }
     }
+
     /**
      * commit transaction
      */
@@ -281,7 +284,7 @@ class Connection
      * @param string $sql
      * @param array $bindParams
      * @param int $fetchStyle
-     * @return array|bool|mixed
+     * @return array
      */
     public function fetchAll($sql, array $bindParams = [], $fetchStyle = PDO::FETCH_ASSOC)
     {
@@ -296,7 +299,7 @@ class Connection
             call_user_func_array([$statement, 'setFetchMode'], $args);
             return $statement->fetchAll();
         }
-        return false;
+        return [];
     }
 
     /**
@@ -343,7 +346,7 @@ class Connection
      * insert
      * @param $tableName
      * @param array $insertData
-     * @return bool false|int lastInsertId
+     * @return bool false|int affected rows
      */
     public function insert($tableName, array $insertData = [])
     {
@@ -355,17 +358,13 @@ class Connection
         $bindFields = [];
         $values = [];
         foreach ($insertData as $key => $value) {
-            $fields[] = $key;
+            $fields[] = '`' . $key . '`';
             $bindFields[] = '?';
             $values[] = $value;
         }
-        $sql = 'INSERT INTO ' . $tableName . '(' . implode($fields, ',') . ') VALUES(' . implode($bindFields, ',') . ')';
+        $sql = 'INSERT INTO ' . $tableName . '(' . implode(',', $fields) . ') VALUES(' . implode(',', $bindFields) . ')';
 
-        $affectedRows = $this->execute($sql, $values);
-        if ($affectedRows) {
-            return $this->getLastInsertId();
-        }
-        return false;
+        return $this->execute($sql, $values);
     }
 
     /**
@@ -416,20 +415,10 @@ class Connection
             $bindParams = $bindSetParams;
         }
 
-        $sql = 'UPDATE ' . $tableName . ' SET ' . implode($fields, ',');
+        $sql = 'UPDATE ' . $tableName . ' SET ' . implode(',', $fields);
         $sql .= ' WHERE ' . $where;
 
         return $this->execute($sql, $bindParams);
-    }
-
-    /**
-     * from table
-     * @param string $tableName
-     * @return Table
-     */
-    public function from($tableName)
-    {
-        return new Table($tableName, $this);
     }
 
     /**

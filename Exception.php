@@ -1,9 +1,9 @@
 <?php
-namespace coco\db;
+namespace Moon\Db;
 
 /**
  * Class Exception
- * @package coco\db
+ * @package Moon\Db
  */
 class Exception extends \Exception
 {
