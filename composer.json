@@ -21,5 +21,13 @@
         "psr-4": {
             "Moon\\Db\\": ""
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Moon\\Db\\Tests\\": "./tests"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.0"
     }
 }
