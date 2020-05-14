@@ -14,16 +14,23 @@ use PHPUnit\Framework\TestCase;
  */
 final class ConnectionTest extends TestCase
 {
-    const DB_PWD = 'your password';
+    private $db_pwd = 'your_pwd';
+
+    private function getPwd()
+    {
+        if (getenv('DB_PWD')) {
+            $this->db_pwd = getenv('DB_PWD');
+        }
+        return $this->db_pwd;
+    }
 
     public function testConnect()
     {
         $conn = new Connection([
-            'password' => self::DB_PWD
+            'password' => $this->getPwd()
         ], [[
-            'password' => self::DB_PWD
+            'password' => $this->getPwd()
         ]]);
-
 
         $this->assertInstanceOf(Connection::class, $conn);
         $this->assertInstanceOf(\PDO::class, $conn->getPdo());
@@ -33,9 +40,9 @@ final class ConnectionTest extends TestCase
     public function testSelect()
     {
         $conn = new Connection([
-            'password' => self::DB_PWD
+            'password' => $this->getPwd()
         ], [[
-            'password' => self::DB_PWD
+            'password' => $this->getPwd()
         ]]);
 
         $tables = $conn->fetchAll('show tables');
@@ -59,9 +66,9 @@ final class ConnectionTest extends TestCase
     public function testCUD()
     {
         $conn = new Connection([
-            'password' => self::DB_PWD
+            'password' => $this->getPwd()
         ], [[
-            'password' => self::DB_PWD
+            'password' => $this->getPwd()
         ]]);
 
         $now = date('Y-m-d H:i:s');
@@ -80,12 +87,12 @@ final class ConnectionTest extends TestCase
         $this->assertTrue($res >= 1);
     }
 
-    public function testDisConnect()
+    public function testDisconnect()
     {
         $conn = new Connection([
-            'password' => self::DB_PWD
+            'password' => $this->getPwd()
         ], [[
-            'password' => self::DB_PWD
+            'password' => $this->getPwd()
         ]]);
 
         $pdo = $conn->getPdo();
