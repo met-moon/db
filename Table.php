@@ -138,7 +138,7 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
 
     /**
      * save
-     * @return bool false|int affected rows
+     * @return int|bool false affected rows
      * @throws Exception
      */
     public function save()
@@ -167,7 +167,7 @@ abstract class Table implements \JsonSerializable, \ArrayAccess
 
     /**
      * delete
-     * @return bool false|int affected rows
+     * @return int|bool false affected rows
      * @throws Exception
      */
     public function delete()

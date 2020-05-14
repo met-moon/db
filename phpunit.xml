@@ -2,6 +2,7 @@
     <testsuites>
         <testsuite name="tester">
             <directory>tests</directory>
+            <!-- <exclude>tests/ConnectionTest.php</exclude> -->
         </testsuite>
     </testsuites>
 </phpunit>

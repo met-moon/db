@@ -14,7 +14,7 @@ class User extends Table
 
     public static function getDb()
     {
-        $db = $GLOBALS['db'];
+        global $db;
         return $db;
     }
 
