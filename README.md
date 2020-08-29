@@ -6,19 +6,12 @@ A database connection based on pdo
 
 // get a connection
 
-//method 1 using set constructor
-/*$config = [
+$config = [
     'dsn'=>'mysql:host=localhost;dbname=test',
     'username'=>'root',
     'password'=>'root'
 ];
-$db = new Moon\Db\Connection($config);*/
-
-// or method 2 using set object attributes
-$db = new \Moon\Db\Connection();
-$db->dsn = 'mysql:host=localhost;dbname=blog';
-$db->username = 'root';
-$db->password = 'root';
+$db = new Moon\Db\Connection($config);
 
 //get pdo instance
 try{
