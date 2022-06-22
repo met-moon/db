@@ -6,7 +6,7 @@
 
 namespace Moon\Db\Tests;
 
-use Moon\Db\Connection;
+use Moon\Db\MysqlConnection;
 use PHPUnit\Framework\TestCase;
 
 final class TableTest extends TestCase
@@ -21,7 +21,7 @@ final class TableTest extends TestCase
 
         global $db;
 
-        $db = new Connection([
+        $db = new MysqlConnection([
             'dsn' => 'mysql:host=localhost;dbname=test',
             'username' => 'root',
             'password' => $this->db_pwd,

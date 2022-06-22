@@ -20,6 +20,6 @@ class User extends Table
 
     public static function tableName()
     {
-        return 'user';
+        return 'users';
     }
 }

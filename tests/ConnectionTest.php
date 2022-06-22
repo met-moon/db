@@ -6,7 +6,7 @@
 
 namespace Moon\Db\Tests;
 
-use Moon\Db\Connection;
+use Moon\Db\MysqlConnection;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,20 +26,20 @@ final class ConnectionTest extends TestCase
 
     public function testConnect()
     {
-        $conn = new Connection([
+        $conn = new MysqlConnection([
             'password' => $this->getPwd()
         ], [[
             'password' => $this->getPwd()
         ]]);
 
-        $this->assertInstanceOf(Connection::class, $conn);
+        $this->assertInstanceOf(MysqlConnection::class, $conn);
         $this->assertInstanceOf(\PDO::class, $conn->getPdo());
         $this->assertInstanceOf(\PDO::class, $conn->getReadPdo());
     }
 
     public function testSelect()
     {
-        $conn = new Connection([
+        $conn = new MysqlConnection([
             'password' => $this->getPwd()
         ], [[
             'password' => $this->getPwd()
@@ -65,7 +65,7 @@ final class ConnectionTest extends TestCase
 
     public function testCUD()
     {
-        $conn = new Connection([
+        $conn = new MysqlConnection([
             'password' => $this->getPwd()
         ], [[
             'password' => $this->getPwd()
@@ -89,7 +89,7 @@ final class ConnectionTest extends TestCase
 
     public function testDisconnect()
     {
-        $conn = new Connection([
+        $conn = new MysqlConnection([
             'password' => $this->getPwd()
         ], [[
             'password' => $this->getPwd()

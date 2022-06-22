@@ -8,7 +8,7 @@ namespace Moon\Db;
 
 use PDO;
 
-class SqliteConnection
+class SqliteConnection implements Connection
 {
     protected $pdo;
 

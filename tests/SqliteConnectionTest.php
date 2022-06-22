@@ -10,14 +10,12 @@ use Moon\Db\SqliteConnection;
 use PHPUnit\Framework\TestCase;
 use PDO;
 
-final class Sqlite3Test extends TestCase
+final class SqliteConnectionTest extends TestCase
 {
     protected function getConnection()
     {
         $config = [
             'dsn' => 'sqlite:/tmp/test.db', //'sqlite::memory:',
-            'username' => 'test',
-            'password' => 'test',
             'options' => [PDO::ATTR_PERSISTENT => true]
         ];
         return new SqliteConnection($config);
