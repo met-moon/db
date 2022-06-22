@@ -9,7 +9,7 @@ namespace Moon\Db\Tests;
 use Moon\Db\Connection;
 use PHPUnit\Framework\TestCase;
 
-class TableTest extends TestCase
+final class TableTest extends TestCase
 {
     private $db_pwd = 'your_pwd';
 
