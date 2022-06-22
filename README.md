@@ -15,7 +15,7 @@ $db = new Moon\Db\Connection($config);
 
 //get pdo instance
 try{
-    $db->getPdo();
+    $pdo = $db->getPdo();
 }catch (PDOException $e){
     echo $e->getMessage();
 }
